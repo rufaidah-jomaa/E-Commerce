@@ -1,7 +1,7 @@
 import mongoose, { Schema, Types, model } from 'mongoose';
 
 const categprySchema = new Schema({
-    categoryName:{
+   name:{
         type:String,
         unique:true,
         required:true
@@ -17,17 +17,17 @@ const categprySchema = new Schema({
     status:{
         type:String,
         default:'Active',
-        enum:['active', 'inactive']
+        enum:['Active', 'inactive']
     },
     createdBy:{
         type:Types.ObjectId,
         ref:'User',
-        required:true
+       
     },
     updatedBy:{
         type:Types.ObjectId,
         ref:'User',
-        required:true
+
     }
 },
 {
