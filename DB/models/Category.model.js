@@ -1,7 +1,8 @@
 import mongoose, { Schema, Types, model } from 'mongoose';
 
-const categprySchema = new Schema({
-   name:{
+const categorySchema = new Schema({
+
+   categoryName:{
         type:String,
         unique:true,
         required:true
@@ -34,5 +35,5 @@ const categprySchema = new Schema({
 timestamps:true
 })
 
-const categoryModel = model('Category',categprySchema);
+const categoryModel = model('Category',categorySchema);
 export default categoryModel;

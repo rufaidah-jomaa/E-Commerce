@@ -5,4 +5,5 @@ const router = Router({caseSensitive:true});
 
 router.get('/',controller.testCategory)
 router.post('/createCategory',fileUpload(fileType.image).single('image'),controller.createCategory)
+router.get('/getCategories',controller.getAllcat)
 export default router;
