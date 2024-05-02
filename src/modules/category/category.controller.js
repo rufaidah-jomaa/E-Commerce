@@ -11,7 +11,7 @@ export const createCategory = async(req,res,next)=>{
    if ( await categoryModel.findOne({name})){
           return res.status(409).json({message:"Category already exists"})
    }
-   const category= await categoryModel.create({categoryName:name,image:{secure_url,public_id},slug:slugify(name)})
+   const category= await categoryModel.create({name:name,image:{secure_url,public_id},slug:slugify(name)})
 return res.json({message:"success",category})
 }
 
