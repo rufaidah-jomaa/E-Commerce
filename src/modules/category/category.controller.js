@@ -6,6 +6,7 @@ export const testCategory = async(req,res,next)=>{
     return res.json("Category")
 }
 export const createCategory = async(req,res,next)=>{
+try{
    const {name}=req.body;
    const {secure_url,public_id} = await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.App_Name}/categories`} )
    if ( await categoryModel.findOne({name})){
@@ -13,6 +14,9 @@ export const createCategory = async(req,res,next)=>{
    }
    const category= await categoryModel.create({name:name,image:{secure_url,public_id},slug:slugify(name)})
 return res.json({message:"success",category})
+}catch(error){
+ return res.json(error.message)
+}
 }
 
 export const getAllcat= async (req,res)=>{
