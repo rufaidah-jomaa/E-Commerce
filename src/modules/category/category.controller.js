@@ -6,13 +6,19 @@ export const testCategory = async(req,res,next)=>{
     return res.json("Category")
 }
 export const createCategory = async(req,res,next)=>{
+try{
    const {name}=req.body;
    const {secure_url,public_id} = await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.App_Name}/categories`} )
    if ( await categoryModel.findOne({name})){
           return res.status(409).json({message:"Category already exists"})
    }
+
    const category = await categoryModel.create({name:name,image:{secure_url,public_id},slug:slugify(name)})
+
 return res.json({message:"success",category})
+}catch(error){
+ return res.json(error.message)
+}
 }
 
 export const getAll= async (req,res)=>{
@@ -60,3 +66,4 @@ export const destroy = async(req,res)=>{
     await cloudinary.uploader.destroy(category.image.public_id)
     return res.json({message:"success",category})
 }
+
