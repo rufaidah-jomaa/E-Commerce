@@ -1,6 +1,7 @@
 import connectDB from "./DB/connection.js";
 import authRouter from "./src/modules/auth/auth.router.js";
 import categoryRouter from "./src/modules/category/category.router.js";
+import subCategoryRouter from "./src/modules/subcategory/subcategory.router.js"
 import productRouter from "./src/modules/product/product.router.js";
 import userRouter from "./src/modules/user/user.router.js";
 import cors from "cors";
@@ -13,6 +14,7 @@ const initApp = (express, app) => {
   });
   app.use("/auth", authRouter);
   app.use("/category", categoryRouter);
+  app.use('/subcategory',subCategoryRouter)
   app.use("/product", productRouter);
   app.use("/user", userRouter);
   app.use("*", (req, res) => {

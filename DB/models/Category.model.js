@@ -32,8 +32,14 @@ const categorySchema = new Schema({
     }
 },
 {
-timestamps:true
+timestamps:true,
+toJSON:{virtuals:true } //by default : false
 })
-
+//virtual populate // زي كاني اضفت حقل جديد للجدول لكن بشكل افتراضي اسمه سبكاتيجوري لكن ما بتخزن بالداتا بيس
+categorySchema.virtual('subcategory',{
+    localField:'_id', // primary key column from this model(parent)
+    foreignField:'categoryId', // foreign key column from second model(child)
+    ref:'SubCategory' // name of child model 
+})
 const categoryModel = model('Category',categorySchema);
 export default categoryModel;
