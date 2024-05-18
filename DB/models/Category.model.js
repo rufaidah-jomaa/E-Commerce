@@ -33,7 +33,8 @@ const categorySchema = new Schema({
 },
 {
 timestamps:true,
-toJSON:{virtuals:true } //by default : false
+toJSON:{virtuals:true },//by default : false
+toObject:{virtuals:true}
 })
 //virtual populate // زي كاني اضفت حقل جديد للجدول لكن بشكل افتراضي اسمه سبكاتيجوري لكن ما بتخزن بالداتا بيس
 categorySchema.virtual('subcategory',{
