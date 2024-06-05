@@ -9,6 +9,7 @@ import orderRouter from './src/modules/order/order.router.js'
 import userRouter from "./src/modules/user/user.router.js";
 
 import cors from "cors";
+import { globalErrorHandling } from "./src/services/errorHandling.js";
 const initApp = (express, app) => {
   connectDB();
   app.use(cors());
@@ -24,8 +25,10 @@ const initApp = (express, app) => {
   app.use('/coupon',couponRouter)
   app.use('/order',orderRouter)
   app.use("/user", userRouter);
+ 
   app.use("*", (req, res) => {
     return res.status(404).json("Page not found");
   });
+  app.use(globalErrorHandling)
 };
 export default initApp;

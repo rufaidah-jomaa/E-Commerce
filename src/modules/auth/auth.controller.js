@@ -3,25 +3,39 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import {customAlphabet, nanoid} from 'nanoid'
 import { sendEmail } from "../../services/sendEmail.js";
+import { AppError } from "../../services/AppError.js";
 
 export const testAuth =(req,res,next)=>{
     return res.json("Auth")
 }
 
 export const register= async(req,res)=>{
-    try{
+   
     const {username,email,password}=req.body;
-    const user = await userModel.findOne({email})
-    if(user){
-        return res.status(409).json({message:"email already exists"})
-    }
     const hashedPassword = bcrypt.hashSync(password , parseInt(process.env.SALT_ROUND) ); //hashSync بدل await hash //اي اشي حيجيني من الدوت انف حيكون سترينج فلازم نحول لانتجر
     const newUser = await userModel.create({username,email,password:hashedPassword})
+    if(!newUser){
+        return next(new AppError('Error while creating new user',500))
+    }
+    const token =  jwt.sign({email},process.env.confirmEmailSIG)
+    await sendEmail(email,"Rufaidah-E-commerce" ,username,token)
     return res.status(201).json({message:"success",newUser})
-}catch(error){
-    return res.json(error.message)
+
 }
-}
+export const confirmEmail= async(req,res)=>{
+    const {token} = req.params;
+  
+     const decoded = jwt.verify(token, process.env.confirmEmailSIG);
+  
+  if(!decoded){
+      return next( new AppError('invalid token',401))
+  }
+  const user= await userModel.updateOne({email: decoded.email}, {confirmEmail: true});
+  if(user.modifiedCount>0){
+      return res.redirect(process.env.FEURL)
+  }
+  return next( new AppError('Error while confirming your Email, please try again',500))
+  }
 
 export const login = async (req,res)=>{
     const {email,password} = req.body;
