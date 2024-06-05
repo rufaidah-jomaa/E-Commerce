@@ -54,7 +54,7 @@ export const emailTemplate = (email,userName,token)=>{
                   <p>نحن سعداء بانضمامك إلينا. نشكرك على التسجيل معنا.</p>
                   <p>إذا كان لديك أي أسئلة، فلا تتردد في التواصل مع المسؤول 
                   </p>
-                  <a href='localhost:4000/auth/confirmEmail/${token}' style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-align: center; text-decoration: none; border-radius: 5px;">
+                  <a href='https://e-commerce-elq4.onrender.com/auth/confirmEmail/${token}' style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-align: center; text-decoration: none; border-radius: 5px;">
                  تأكيد الايميل</a> 
               </div>
              
