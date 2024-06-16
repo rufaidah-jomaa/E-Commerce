@@ -1,5 +1,5 @@
 import Joi from "joi";
-export const generalValidation={
+export const generalValidation = {
     email: Joi.string().email().required(),
     password: Joi.string().pattern(/^[a-zA-Z0-9]{8,20}$/).required(),
     image:Joi.object({
@@ -18,7 +18,15 @@ export const generalValidation={
 export const validation = (schema)=>{
     return (req,res,next)=>{
         const errorMessage=[]
-        const {error}= schema.validate(req.body,{abortEarly:false})
+        let filterData = {}
+    if(req.file){
+        filterData={image:req.file,...req.body,...req.params,...req.query}
+    }else if(req.files){
+        filterData={...req.files,...req.body,...req.params,...req.query}
+    }else{
+        filterData = {...req.body,...req.params,...req.query}
+    }
+        const {error}= schema.validate(filterData,{abortEarly:false})
         if(error){
            
             error.details.forEach(element => {

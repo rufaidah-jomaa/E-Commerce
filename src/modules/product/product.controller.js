@@ -4,18 +4,19 @@ import subCategoryModel from "../../../DB/models/SubCategory.model.js";
 import cloudinary from "../../services/cloudinary.js";
 import productModel from "../../../DB/models/Product.model.js";
 import { pagination } from "../../services/pagination.js";
+import { AppError } from "../../services/AppError.js";
 
 export const testProduct = (req, res, next) => {
   return res.json("Product");
 };
 
-export const createProduct = async (req, res) => {
-  try {
+export const createProduct = async (req, res,next) => {
+  
     const { name, price, discount, categoryId, subCategoryId } = req.body;
 
     const checkCategory = await categoryModel.findById(categoryId);
     if (!checkCategory) {
-      return res.status(404).json({ message: "category not found!" });
+      return next(new AppError('category not found!',404))
     }
 
     const checkSubCategory = await subCategoryModel.findOne({
@@ -23,7 +24,7 @@ export const createProduct = async (req, res) => {
       categoryId: categoryId,
     });
     if (!checkSubCategory) {
-      return res.status(404).json({ message: "subCategory not found!" });
+      return next(new AppError('subCategory not found!',404))
     }
 
     req.body.slug = slugify(name);
@@ -52,10 +53,7 @@ export const createProduct = async (req, res) => {
     return res
       .status(200)
       .json({ message: "product added successfully!", product });
-  } catch (error) {
-    console.log(error.message);
-    return res.json({ error: error.message });
-  }
+ 
 };
 
 export const getDetails = async (req, res) => {
@@ -76,7 +74,7 @@ export const getDetails = async (req, res) => {
 export const getProducts = async (req, res) => {
   const { skip, limit } = pagination(req.query.page, req.query.limit);
   let queryObj = { ...req.query };
-  const execQuery = ["page", "limit", "sort", "search","fields"];
+  const execQuery = ["page", "limit", "sort", "search", "fields"];
   execQuery.map((ele) => {
     delete queryObj[ele];
   });
@@ -88,11 +86,11 @@ export const getProducts = async (req, res) => {
   queryObj = JSON.parse(queryObj);
 
   const mongooseQuery = productModel
-    .find({price:1000},queryObj)
+    .find({ price: 1000 }, queryObj)
     .skip(skip)
     .limit(limit);
   if (req.query.search) {
-     mongooseQuery.find({
+    mongooseQuery.find({
       $or: [
         { name: { $regex: req.query.search } },
         { description: { $regex: req.query.search } },
@@ -100,8 +98,17 @@ export const getProducts = async (req, res) => {
     });
   }
   if (req.query.fields) {
-     mongooseQuery.select(req.query.fields);
+    mongooseQuery.select(req.query.fields);
   }
-  const products = await mongooseQuery.sort(req.query.sort);
+  let products = await mongooseQuery.sort(req.query.sort);
+  
+  products = products.map((product) => {
+    
+    return {
+      ...product.toObject(),
+      mainImage: product.mainImage.secure_url,
+      subImages: product.subImages.map(img=> img.secure_url),
+    };
+  });
   return res.json({ message: "success", products });
 };
