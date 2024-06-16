@@ -29,8 +29,8 @@ export const confirmEmail = async(req, res, next)=>{
   if(!decoded){
       return next ( new AppError('invalid token',401))
   }
-  const user= await userModel.updateOne({email: decoded.email}, {confirmEmail: true});
-  if(user.modifiedCount>0){
+  const user = await userModel.updateOne({email: decoded.email}, {confirmEmail: true});
+  if(user.modifiedCount > 0){
       return res.redirect(process.env.FEURL)
   }
   return next (new AppError('Error while confirming your Email, please try again',500))
@@ -41,12 +41,24 @@ export const confirmEmail = async(req, res, next)=>{
       const worksheet = workbook.Sheets[workbook.SheetNames[0]]
       const users = xlsx.utils.sheet_to_json(worksheet)
      
-      users.forEach(user=>{
+   /*  users.forEach(user=>{
         const hashedPassword = bcrypt.hashSync(user.password , parseInt(process.env.SALT_ROUND) )
         user.password = hashedPassword
+        const user = await userModel.create(user)
         const token =  jwt.sign(user.email,process.env.confirmEmailSIG)
         sendEmail(user.email,"Rufaidah-E-commerce",user.username,token)
-      })
+      })*/
+
+      async function processUsers(users) {
+        for (const user of users) {
+            const hashedPassword = bcrypt.hashSync(user.password , parseInt(process.env.SALT_ROUND) )
+            user.password = hashedPassword
+            const userA = await userModel.create(user)
+            const token =  jwt.sign(user.email,process.env.confirmEmailSIG)
+            sendEmail(user.email,"Rufaidah-E-commerce",user.username,token)
+        }
+      }
+      processUsers(users)
       return res.json(users)
 
   }
