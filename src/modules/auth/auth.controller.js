@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import {customAlphabet, nanoid} from 'nanoid'
 import { sendEmail } from "../../services/sendEmail.js";
 import { AppError } from "../../services/AppError.js";
-
+import xlsx from 'xlsx'
 export const testAuth =(req,res,next)=>{
     return res.json("Auth")
 }
@@ -22,19 +22,33 @@ export const register= async(req,res)=>{
     return res.status(201).json({message:"success",newUser})
 
 }
-export const confirmEmail= async(req,res)=>{
+export const confirmEmail = async(req, res, next)=>{
     const {token} = req.params;
-  
      const decoded = jwt.verify(token, process.env.confirmEmailSIG);
   
   if(!decoded){
-      return next( new AppError('invalid token',401))
+      return next ( new AppError('invalid token',401))
   }
   const user= await userModel.updateOne({email: decoded.email}, {confirmEmail: true});
   if(user.modifiedCount>0){
       return res.redirect(process.env.FEURL)
   }
-  return next( new AppError('Error while confirming your Email, please try again',500))
+  return next (new AppError('Error while confirming your Email, please try again',500))
+  }
+
+  export const addUsersExcel = async(req,res)=>{
+      const workbook =  xlsx.readFile(req.file.path)
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]]
+      const users = xlsx.utils.sheet_to_json(worksheet)
+     
+      users.forEach(user=>{
+        const hashedPassword = bcrypt.hashSync(user.password , parseInt(process.env.SALT_ROUND) )
+        user.password = hashedPassword
+        const token =  jwt.sign(user.email,process.env.confirmEmailSIG)
+        sendEmail(user.email,"Rufaidah-E-commerce",user.username,token)
+      })
+      return res.json(users)
+
   }
 
 export const login = async (req,res)=>{
