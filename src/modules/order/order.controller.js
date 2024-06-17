@@ -105,10 +105,10 @@ export const create = async (req, res) => {
       paid: 0,
       invoice_nr: 1234,
     };
-    const file="../../invoice.pdf"
-  createInvoice(invoice,file );
+    const file="invoice.pdf"
+  createInvoice(invoice,file);
   const x=''
-    sendEmail(user.email,"Invoice",user.username,x,"Invoice",file)
+    sendEmail(user.email,"Purchase Invoice ",user.username,x,"Invoice",true)
 
     for (const product of req.body.products) {
       await productModel.findOneAndUpdate(

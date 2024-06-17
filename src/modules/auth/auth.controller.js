@@ -18,8 +18,8 @@ export const register= async(req,res)=>{
         return next(new AppError('Error while creating new user',500))
     }
     const token =  jwt.sign({email},process.env.confirmEmailSIG)
-    const file=''
-    await sendEmail(email,"Rufaidah-E-commerce" ,username,token,'register',file)
+  
+    await sendEmail(email,"Rufaidah-E-commerce" ,username,token,'register')
     return res.status(201).json({message:"success",newUser})
 
 }

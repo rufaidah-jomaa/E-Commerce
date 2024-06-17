@@ -1,13 +1,14 @@
 import nodemailer from 'nodemailer'
 import { emailTemplate } from './emailTemplete.js';
-import fs from 'fs'
-import pkg from 'pdfkit';
-import path from 'path'
-export async function sendEmail(to,subject,username,token,subjectC,file) {
-  const  attachment= {
-    filename: file,
-    path:file // Path to your PDF file
-   }
+
+export async function sendEmail(to,subject,username,token,subjectC,attachFile = false) {
+  let attachments = [];
+  if (attachFile) {
+    attachments.push({
+      filename: "invoice.pdf", // Provide a default filename
+      path: "invoice.pdf" // Provide the path to the invoice PDF
+    });
+  }
     const transporter = nodemailer.createTransport({
         service:"gmail",
         auth: {
@@ -21,7 +22,8 @@ export async function sendEmail(to,subject,username,token,subjectC,file) {
       from: `E-Commerce by Rufaidah Jomaa ${process.env.emailSender}`, // sender address
       to,// list of receivers
       subject, // Subject line 
-      html:emailTemplate(to,username,token,subjectC,attachment),
+      html:emailTemplate(username,token,subjectC),
+      attachments
     });
   
     return info;

@@ -1,4 +1,5 @@
-export const emailTemplate = (email,userName,token,subjectC,attachments)=>{
+
+export const emailTemplate = (userName,token,subjectC)=>{
       let content= ``
       if (subjectC=='register'){
         content=` <h1>!${userName},مرحباً</h1>
@@ -11,7 +12,7 @@ export const emailTemplate = (email,userName,token,subjectC,attachments)=>{
       }
       if(subjectC=='Invoice'){
         content=`<h1>!${userName},مرحباً</h1>
-       <p> We are happy that you purchased our product. We hope you like it, here is your invoice <a href="${attachments.path}">Download Invoice</a> </p>`
+       <p> We are happy that you purchased our product. We hope you like it, here is your invoice  </p>`
       }
     return  ` <!DOCTYPE html>
       <html>
