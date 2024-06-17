@@ -24,12 +24,14 @@ export const register= async(req,res)=>{
 }
 export const confirmEmail = async(req, res, next)=>{
     const {token} = req.params;
+    
      const decoded = jwt.verify(token, process.env.confirmEmailSIG);
-  
+    
   if(!decoded){
       return next ( new AppError('invalid token',401))
   }
   const user = await userModel.updateOne({email: decoded.email}, {confirmEmail: true});
+  
   if(user.modifiedCount > 0){
       return res.redirect(process.env.FEURL)
   }
@@ -54,7 +56,8 @@ export const confirmEmail = async(req, res, next)=>{
             const hashedPassword = bcrypt.hashSync(user.password , parseInt(process.env.SALT_ROUND) )
             user.password = hashedPassword
             const userA = await userModel.create(user)
-            const token =  jwt.sign(user.email,process.env.confirmEmailSIG)
+            const email = user.email
+            const token =  jwt.sign({email},process.env.confirmEmailSIG)
             sendEmail(user.email,"Rufaidah-E-commerce",user.username,token)
         }
       }
