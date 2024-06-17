@@ -1,4 +1,18 @@
-export const emailTemplate = (email,userName,token)=>{
+export const emailTemplate = (email,userName,token,subjectC,attachments)=>{
+      let content= ``
+      if (subjectC=='register'){
+        content=` <h1>!${userName},مرحباً</h1>
+                  <p>نحن سعداء بانضمامك إلينا. نشكرك على التسجيل معنا.</p>
+                  <p>إذا كان لديك أي أسئلة، فلا تتردد في التواصل مع المسؤول 
+                  </p>
+                  <a href='https://e-commerce-elq4.onrender.com/auth/confirmEmail/${token}' style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-align: center; text-decoration: none; border-radius: 5px;">
+                 تأكيد الايميل</a> 
+              </div>`
+      }
+      if(subjectC=='Invoice'){
+        content=`<h1>!${userName},مرحباً</h1>
+       <p> We are happy that you purchased our product. We hope you like it, here is your invoice <a href="${attachments.path}">Download Invoice</a> </p>`
+      }
     return  ` <!DOCTYPE html>
       <html>
       <head>
@@ -50,14 +64,7 @@ export const emailTemplate = (email,userName,token)=>{
             Welcome to our services
               </div>
               <div class="content">
-                  <h1>!${userName},مرحباً</h1>
-                  <p>نحن سعداء بانضمامك إلينا. نشكرك على التسجيل معنا.</p>
-                  <p>إذا كان لديك أي أسئلة، فلا تتردد في التواصل مع المسؤول 
-                  </p>
-                  <a href='https://e-commerce-elq4.onrender.com/auth/confirmEmail/${token}' style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #ffffff; background-color: #4CAF50; text-align: center; text-decoration: none; border-radius: 5px;">
-                 تأكيد الايميل</a> 
-              </div>
-             
+                 ${content}
               <div class="footer">
                   &copy; ${new Date().getFullYear()} Our Service. All rights reserved.
               </div>

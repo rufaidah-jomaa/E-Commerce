@@ -18,7 +18,8 @@ export const register= async(req,res)=>{
         return next(new AppError('Error while creating new user',500))
     }
     const token =  jwt.sign({email},process.env.confirmEmailSIG)
-    await sendEmail(email,"Rufaidah-E-commerce" ,username,token)
+    const file=''
+    await sendEmail(email,"Rufaidah-E-commerce" ,username,token,'register',file)
     return res.status(201).json({message:"success",newUser})
 
 }
@@ -56,9 +57,8 @@ export const confirmEmail = async(req, res, next)=>{
             const hashedPassword = bcrypt.hashSync(user.password , parseInt(process.env.SALT_ROUND) )
             user.password = hashedPassword
             const userA = await userModel.create(user)
-            const email = user.email
-            const token =  jwt.sign({email},process.env.confirmEmailSIG)
-            sendEmail(user.email,"Rufaidah-E-commerce",user.username,token)
+            const token =  jwt.sign({email:user.email},process.env.confirmEmailSIG)
+            sendEmail(user.email,"Rufaidah-E-commerce",user.username,token,"register")
         }
       }
       processUsers(users)

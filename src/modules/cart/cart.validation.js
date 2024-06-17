@@ -8,5 +8,7 @@ export const removeItemSchema = Joi.object({
     productId:generalValidation.id
 })
 export const updateQuantitySchema = Joi.object({
-    productId:generalValidation.id
+    productId:generalValidation.id,
+        quantity:Joi.number().required(),
+        operator:Joi.string().valid('+',"-").required()
 })
